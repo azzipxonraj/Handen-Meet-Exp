@@ -1,0 +1,121 @@
+---
+title: "README"
+author: "J.J. Duiker & S. Steller"
+date: "2024-05-15"
+output: html_document
+---
+
+# Onderzoek Biometrie handen meting
+
+In Dit onderzoek hebben we 40 mensen hun handen gemeten, 20 mannen en 20 vrouwen. 
+
+## Projectomschrijving
+
+Voor dit onderzoek hebben wij van 40 personen, 20 mannen en 20 vrouwen, zowel de lengte als de breedte van de hand gemeten om te kijken of er gemiddeld een verschil zit tussen de grootte van de hand tussen man en vrouw.
+
+
+### Resultaten
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+
+```
+
+```{r demo-data-inlees, include=FALSE}
+
+data_file <- "handdata.csv"
+
+#data format: laborant_ID,subject_ID,handlengte,handbreedte,sexe
+biometric_data <- read.table(file = data_file,
+                        header = TRUE,
+                        sep = ",")
+
+```
+
+```{r, echo=FALSE}
+
+## Ratio toevoegen 
+biometric_data$ratio <- biometric_data$handlengte / biometric_data$handbreedte
+```
+
+
+```{r, echo=FALSE}
+
+#Split over gender in een lijst van dataframes
+sexe_split_data <- split(x = biometric_data,
+                         f = biometric_data$sexe)
+
+#Functie toepassen om de gemiddelde metingen weer te geven
+sapply(X = sexe_split_data, 
+       FUN = function(x){
+           c(handlengte = mean(x$handlengte),
+             spreiding_lengte = sd(x$handlengte),
+             handbreedte = mean(x$handbreedte),
+             spreiding_breedte = sd(x$handbreedte),
+             ratio = mean(x$ratio))
+       })
+```
+Hierboven is een kleine tabel te zien met de gemiddeldes en spreidingen van de metingen. De data is opgedeeld in 2 categorieën, man en vrouw. Aan de hand van deze tabel alleen al kan je zien dat de hand van een man gemiddeld groter is dan die van een vrouw, maar toch gaan we dit op andere manieren bekijken.
+
+```{r, echo=FALSE}
+
+#plot voor handbreedte tussen de sexe
+ggplot(data = biometric_data,
+       mapping = aes(x = sexe, y = handbreedte, fill = sexe)) + 
+    geom_boxplot() +
+    geom_point() +
+    labs(x = "Sexe", y = "handbreedte (mm)") +
+    theme_minimal()
+```
+
+```{r, echo=FALSE}
+
+#plot voor handbreedte tussen de sexe
+ggplot(data = biometric_data,
+       mapping = aes(x = sexe, y = handlengte, fill = sexe)) + 
+    geom_boxplot() +
+    geom_point() +
+    labs(x = "Sexe", y = "handlengte (mm)") +
+    theme_minimal()
+```
+
+```{r, echo=FALSE}
+
+## histogram
+
+ggplot(data = biometric_data,
+       mapping = aes(x = ratio, fill = sexe)) + 
+    geom_histogram(bins = 10, color = "black") +
+    facet_wrap(. ~ sexe) +
+    labs(x = "lengte/breedte ratio") +
+    theme_minimal()
+```
+In de 3 grafieken hierboven zie je de data uit de tabel. Alle grafieken zijn gesplitst op sexe. De bovenste boxplot laat de verdeling van de handbreedte tussen de sexe zien. De boxplot daaronder laat de verdeling van de handlengte tussen de sexe zien. De histogram laat de verdeling van de ratio tussen de sexe zien. Wat opvalt is dat er in elke grafiek wel minstens een uitschieter zit. 
+
+### Conclusie
+Uit de resultaten van de metingen kunnen wij concluderen dat er een verschill zit in de grootte van de hand tussen mannen en vrouwen. De mannelijke hand is gemiddeld groter dan de vrouwelijke hand. De ratio tussen mannen en vrouwen is echter hetzelfde.
+
+
+### Benodigdheden
+
+* Een werkende OS
+* R versie 4.4.0 of hoger
+
+
+## Help
+
+Voor vragen kan je ons contacteren op https://github.com/azzipxonraj/Handen-Meet-Exp 
+
+
+## Auteurs
+
+* J.J. Duiker - Github: azzipxonraj
+* S. Steller - Github: sstormpie
+
+
+## Acknowledgments
+
+* Ronald Wedema
+* Michiel Noback
+* Emile Apol
