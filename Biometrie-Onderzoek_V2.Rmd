@@ -1,0 +1,293 @@
+---
+title: "Handen meting's onderzoek"
+authors: "Storm Steller, Jarno Duiker"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    css: style.css
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+---
+
+```{r setup, include=FALSE}
+# DON'T TOUCH THIS
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+
+```
+### Auteurs: 
+
+J.J. Duiker - 448413
+S. Steller - 469092
+
+## Inleiding
+
+Ons werd de taak opgelegd door onze opdracht gever Michiel Noback of wij het verschil in handgrote tussen de sexe man en vrouw konden berekenen. In dit document zijn wij doorn middel van een template hiermee bezig geweest. Er zijn grafieken en tabellen te vinden met de bijpassende uitleg en observaties. 
+
+
+:::attention
+### Onderzoeksvraag
+> Wat is het verschil in handgrootte tussen de twee sexen?
+:::
+
+
+:::attention
+### Hypothse
+> De mannelijke hand is gemiddeld groter dan de vrouwlijke hand.
+:::
+
+
+:::attention
+### Nulhypothese
+> Het verchil in handgrote tussen de twee sexen in nihil.
+:::
+
+
+## Ontwerp van het experiment
+
+Van 40 proefpersonen, waarvan 20 mannen en 20 vrouwen, meten we zowel de lengte als breedte van hun handen. De meetresultaten slaan we op in een excel document om er vervolgens naar te kijken met grafieken die de lengte, breedte en ratio laten zien. Daaruit kunnen wij een conclusie trekken op onze onderzoeksvraag.
+
+
+:::protocol
+### Protocol voor meting handlengte en handbreedte
+**Meetprotocol:**
+Meet de lengte en breedte van de hand bij 40 mensen (in millimeters). Je let op dat je vanaf de 0 meet en niet vanaf het begin van de liniaal.
+ 
+**Breedte: **
+Laat de persoon de arm (vanaf de elleboog) plat op de tafel leggen, met de wijsvinger tot pink bij elkaar, dus met de duim gespreid. Meet vanaf de knokkel van de wijsvinger tot aan de knokkel bij de pink.
+ 
+**Lengte:** laat de persoon de arm (vanaf de elleboog) plat op de tafel leggen, met de vingers bij elkaar. Meet vanaf de langste vinger tot aan het bot aan de buitenste zijde van de pols.
+
+##### **Benodigdheden**
+
+1. Meetlat, liniaal, schuifmaat of meetlint.  
+2. Spreadsheet om resultaten vast te leggen, met toegang hiertoe op locaties zonder internet-toegang.  
+3. Je laborant-ID: een unieke _identifier_ die jou als onderzoeker identificeert. Neem hiervoor de laatste 4 cijfers van je studentnummer.
+
+##### **Data verzamelen**
+Samen met een andere groep uit de klas gaan wij rond de schoolgebouwen en medestudenten. Wij vragen ze beleefd of ze willen meedoen in een klein wetenschappelijk onderzoek voor school, hierbij willen hun hand meten in de lengte en breedte. Als ze nee beantwoorden groet je ze vriendelijk en ga je doorzoeken. 
+Is het antwoord ja, dan leg je het protocol voor meten uit en vraag je of de persoon deze stappen wil volgen zodat we een goeie meet wijze aanhouden. Deze leg je vast in de spreadsheet, samen met je laborant-ID en een identifier (géén naam!) van de proefpersoon. Ten slotte vraag je aan de proefpersoon zijn/haar/hun sexe en legt deze vast. Wil de proefpersoon deze niet geven, of is die nonbinair, dan leg je dit vast als "anders/onbekend". Het "parallel groepje" (dat niet jouw bevindingen mag horen) doet dezelfde meting en slaat deze met dezelfde participant identifier op. 
+Je bedankt de persoon voor de medewerking en wenst ze een fijne dag.
+Dit doe je tot er 20 mannen en 20 vrouwen zijn gemeten.
+
+:::
+
+
+## Analyse
+
+:::attention
+De data is opgeslagen in het format hieronder:  
+
+<pre>
+laborant_ID,subject_ID,handlengte,handbreedte,sexe
+</pre>
+
+Voorbeeld:
+
+<pre>
+3241,G1_03,113,104,m
+</pre>
+:::
+
+### Data inlezen
+
+```{r demo-data-inlees}
+data_file <- "handdata.csv"
+
+#data format: laborant_ID,subject_ID,handlengte,handbreedte,sexe
+biometric_data <- read.table(file = data_file,
+                        header = TRUE,
+                        sep = ",")
+
+```
+
+
+### Beschrijvende statistieken
+
+
+```{r}
+## Ratio toevoegen 
+biometric_data$ratio <- biometric_data$handlengte / biometric_data$handbreedte
+head(biometric_data)
+```
+Hierboven checken we de tabel door hem te laten zien met de head functie. Hiermee kunnen we met een oog oplsag checken of de data goed is in geladen en gestructureerd. Ook kan je hier kijken of de cijfers een int zijn en niet een char, dit zou namelijk later nog in het project problemen kunnen veroorzaken.
+
+```{r}
+## Gemidelden per sexe
+
+# tapply(X = biometric_data$handlengte,
+#        INDEX = biometric_data$sexe,
+#        FUN = mean)
+
+#Split over gender in een lijst van dataframes
+sexe_split_data <- split(x = biometric_data,
+                         f = biometric_data$sexe)
+
+#Functie toepassen om de gemiddelde metingen weer te geven
+sapply(X = sexe_split_data, 
+       FUN = function(x){
+           c(handlengte = mean(x$handlengte),
+             spreiding_lengte = sd(x$handlengte),
+             handbreedte = mean(x$handbreedte),
+             spreiding_breedte = sd(x$handbreedte),
+             ratio = mean(x$ratio))
+       })
+```
+
+Hierboven is een kleine tabel te zien met de gemiddeldes en spreidingen van de metingen. De data is opgedeeld in 2 categorieën, man en vrouw. Aan de hand van deze tabel alleen al kan je zien dat de hand van een man gemiddeld groter is dan die van een vrouw. 
+
+
+```{r}
+#plot voor handbreedte tussen de sexe
+ggplot(data = biometric_data,
+       mapping = aes(x = sexe, y = handbreedte, fill = sexe)) + 
+    geom_boxplot() +
+    geom_point() +
+    labs(x = "Sexe", y = "handbreedte (mm)") +
+    theme_minimal()
+```
+In deze boxplot is te zien dat gemideld de handbreedte van de mannen groter is dan die van de vrouwen. Dit kan je zien door dat de Q1-Q3 van de mannen boven die van de vrouwen staat. Het mediaan van de mannen is ook boven de 85 mm terwijl die van de vrouwen onder de 80 mm zit
+
+```{r}
+#plot voor handbreedte tussen de sexe
+ggplot(data = biometric_data,
+       mapping = aes(x = sexe, y = handlengte, fill = sexe)) + 
+    geom_boxplot() +
+    geom_point() +
+    labs(x = "Sexe", y = "handlengte (mm)") +
+    theme_minimal()
+```
+Hier zien we de handlengte van de beide sexe. Er is te zien dat bij de mannen er veel uitschieters zijn, zowel naar boven als naar beneden. Ook is te zien dat de Q1-Q3 van de beide sexe dichterbij ligt dan bij de breedte.
+
+```{r}
+## histogram
+
+ggplot(data = biometric_data,
+       mapping = aes(x = ratio, fill = sexe)) + 
+    geom_histogram(bins = 10, color = "black") +
+    facet_wrap(. ~ sexe) +
+    labs(x = "lengte/breedte ratio") +
+    theme_minimal()
+```
+
+In deze grafiek zien we de ratio van de lengte/breedte, er is te zien dat ze beide tussen de 1.75 en de 2.75+. Daarnaast is te zien dat de mannen meer on even zijn verdeeld en bij de vrouwen is er een redelijk midden te zien.
+
+## Data Bespreken
+
+De data hebben we in het veld moeten verzamelen volgens een bepaald protocol. Dit protocol is door de meters gevolgd. De meters waren 2 personen met hetzelfde meet apparatuur, in ons geval een plastic liniaal. De meters hadden beiden een identieke liniaal. De meters hebben zonder elkaar's resultaat te weten hun meting door gegeven aan degene die de data opschreef.
+De data is opverdeeld in 6 kollomen. 
+
+
+### Welke verdeling?
+
+Hoe kleiner de steekproefgrootte (_sample size_) hoe lastiger het is de onderliggende verdeling vast te stellen. Speel maar eens met dit blokje code, en verander de steekproefgrootte (`n=`) in de `rnorm()` functie en de `breaks=` in de `hist()` functie. 
+Neem voor _n_ bijvoorbeeld achtereenvolgens 10, 100, 1000, 10000, 10000 en voor _breaks_ 5, 10, 50. Wanneer zie je een echte normaalverdeling verschijnen? 
+
+```{r sampling-demo, fig.asp=.6, out.width='60%', fig.align='center'}
+hist_data <- data.frame(x = rnorm(n = 100))
+ggplot(data = hist_data,
+       mapping = aes(x = x)) +
+    geom_histogram(bins = 10, fill = "red", colour = "black") +
+    theme_minimal()
+```
+
+:::attention
+**Dit _experiment_ met de argumenten van `rnorm()` en `hist()` moet je opnemen in je eigen RMarkdown.**  
+Beantwoord deze vragen:
+
+1. Wat gebeurt er met de vorm van de verdeling als `n` groter wordt?\
+   A: De vorm is steeds meer even en lijkt op een hele egale normaalverdeling
+2. Wat gebeurt er met de spreiding van de data (x-as) als `n` groter wordt, en kan je dat verklaren?\
+    A: Als N groter wordt, wordt de spreiding van de x as ook groter. N is steekproefgroote wanneer deze        groter is geeft dit meer resultaten waar meer verschillen in kunnen zitten dus krijg je een              bredere x as
+3. Waarom is bij zelfde instellingen voor `n` en `breaks` de uitkomst toch verschillend?\
+    A: Omdat bij N de steekproef omgang bepaald wordt en bij breaks kies je hoeveels bin's je het opdeeld
+4. Welke minimale `n` geeft het meeste kans om een echte normaalverdeling te zien?\
+    A: wij hebben bevonden dat 100 het minimale is om op oogopervlak te zien dat het een normaal                verdeling is
+5. Wat voor bijzonders is er aan de hand met het `breaks` argument? Geeft de documentatie daar een verklaring voor?\
+    A: Het breaks argument is anders dan het bins argument. In het bins argument geef je het aantal bins in een histogram aan. Bij het breaks argument kan je een vector meegeven met de grenswaardes van de bins erin.
+:::
+
+### Bronnen van variatie
+
+Tot nu toe hebben we alleen maar gekeken naar de biologische variatie, de verschillen tussen man en vrouw. Dus is het tijd om te kijken naar de experimentele variatie. Dat is net zo belangrijk als de biologische variatie. Het is belangrijk om het onderzoek reproduceerbaar te maken. Invloed op de experimentele variatie kan bijvoorbeeld het meetinstument zelf zijn. Lang niet alle linialen op aarde zijn precies hetzelfde gefabriceerd.
+
+
+```{r}
+#plot voor handbreedte tussen de sexe
+
+#deze functie zorgt ervoor dat we een nieuwe colom maken met id's veranderd van een int naar een str
+biometric_data$lab_as_string <- as.character(biometric_data$laborant_ID)
+
+ggplot(data = biometric_data,
+       mapping = aes(x = lab_as_string, y = handlengte, fill = lab_as_string)) + 
+    geom_boxplot( colour = "black") +
+    theme_minimal()
+```
+
+De bovenstaande  boxplot geeft de meetwaarden voor handlengte uitgesplitst op laborant_ID. Er is hier mogelijk sprake van een systematische bias. Laborant 8413 heeft schijnbaar consequent een kleinere lengte gemeten dan laborant 1047.
+
+```{r}
+ggplot(data = biometric_data,
+       mapping = aes(x = sexe, y = handbreedte)) +
+    geom_boxplot(fill = "pink") +
+    facet_wrap(. ~ lab_as_string) +
+    ylab("Handbreedte (mm)") +
+    theme_linedraw()
+```
+
+In de bovenstaande boxplot zie je hetzelfde als de boxplot erboven, maar dan met de sexe ook gesplitst. Hier zie je twee bronnen van variatie. Systematiscche bias die waarschijnlijk is veroorzaakt door de laboranten en de biologische variatie tussen man en vrouw.
+
+### De hypothese aannemen?
+
+Nu hebben we naar de data gekeken, maar moeten we de hypothese aannemen? Dat kunnen wij beslissen met deze tests.
+
+```{r}
+shapiro.test(biometric_data$ratio)
+```
+De shapiro test is een parametrische test, dit betekent dat het ontworpen is om specifiek te kijken of een dataset afkomstig is van een normale verdeling. Dit gebruiken we om de p waarde te weten. Met deze p waarde kunnen we kijken of onze hypothese kan worden aangenomen.
+
+```{r}
+vrouw_ratio <- subset(biometric_data,
+                      subset = sexe == "v",
+                      select = ratio,
+                      drop = T)
+man_ratio <- subset(biometric_data,
+                      subset = sexe == "m",
+                      select = ratio,
+                      drop = T)
+t.test(vrouw_ratio,man_ratio)
+```
+hier gebruiken we een t test dit is een parametrische statistische toets die onder andere kan word gebruikt of het gemiddelde van een normaal verdeling grootheid afwijkt van een bepaalde waarde of dat er een verschil zit in gemidelde tussen twee groepen. In ons geval gebruiken wij hem om 2 groepen te vergelijken. Met deze p waarde kunnen wij bepalen of we onze hypothese kunnen aan nemen
+
+```{r, include=FALSE}
+wilcox.test(vrouw_ratio,man_ratio)
+```
+
+Wilcoxon rangtekentoets is een verdelingsvrije toets voor mediaan van een continue verdeling. hieruit komt een p value en in ons geval laat de console ook "alternative hypothesis: true location shift is not equal to 0" zien wat dus de alternative hypothese kan beantwoorden.
+
+## Reflectie op het experiment
+
+:::reflectie
+Jarno: Deze opdracht was zeer interesant om te doen, Ik heb nog niet eerder zo'n meet experiment gedaan en het hebben van een duidelijk protocol is erg handig. Daarnaast de plotjes maken van de data was toch wel een beetje lastig. Ik denk wel dat de metingen tussen de twee laboranten anders zijn maar niet zo significant dat dit het meet experiment ongeldig maakt.
+mijn conclusie uit het experiment is dat de gemidelde grote van de mannen hoger ligt en dat het bijzonder is dat de mannen zoveel uitschieters hebben zowel naar heel groot als heel klein met de lengte.
+
+Storm: Ik vond onderzoek doen wel leuk, maar misschien niet handen meten. Ik werd nogal uitgelachen wanneer ik mensen vroeg om hun handen te meten. Om de data te verwerken en op verschillende manieren te visualiseren vond ik leuk. Alles verliep ook wel soepeltjes en zonder grote problemen. Het enige was dat er een verschil zat in de metingen van de laboranten. Maar die was niet zo groot dat het de data onbruikbaar maakte.
+:::
+
+:::info
+
+1. Zijn de metingen tussen de verschillende meters ook (significant) verschillend? Zo ja, waardoor zou je de verschillen kunnen verklaren?
+
+A: Er is een klein verschil tussen de twee meters. Dit zou kunnen doordat ze de startplaats van de pols anders hebben geïnterpreteerd. 
+
+2. Onderzoek de verschillen tussen mannen en vrouwen met betrekking tot hand lengte, handbreedte en de ratio.
+
+A: Aan de hand van de resultaten van het onderzoek kunnen we concluderen dat mannen gemiddeld een grotere hand hebben, zowel in de lengte als breedte. Het lengte/breedte ratio is echter bijna even groot tussen de sexe.
+
+3. Zou je het protocol aanpassen na deze ervaring, of was hij voldoende duidelijk en reproduceerbaar?
+
+A: Om nog een duidelijker protocol te maken zou er een voorbeeld foto kunnen worden toegevoegd ( of video ) van de meetwijze zodat deze exact kan worden gerepliceerd.
+:::
