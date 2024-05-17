@@ -25,7 +25,7 @@ S. Steller - 469092
 
 ## Inleiding
 
-Ons werd de taak opgelegt door onze opdracht gever Michiel Noback of wij het verschil in handgrote tussen de sexe man en vrouw konden berekenen. In dit document zijn wij doormiddel van een template hier mee bezig geweest. Er zijn grafieken en tabellen te vinden met de bijpassende uitleg en observaties. 
+Ons werd de taak opgelegd door onze opdrachtgever Michiel Noback of wij het verschil in handgrootte tussen de sexe man en vrouw konden berekenen. In dit document zijn wij door middel van een template hiermee bezig geweest. Er zijn grafieken en tabellen te vinden met de bijpassende uitleg en observaties. 
 
 
 :::attention
@@ -42,7 +42,7 @@ Ons werd de taak opgelegt door onze opdracht gever Michiel Noback of wij het ver
 
 :::attention
 ### Nulhypothese
-> Het verchil in handgrote tussen de twee sexen in nihil.
+> Het verchil in handgrootte tussen de twee sexen in nihil.
 :::
 
 
@@ -113,6 +113,7 @@ biometric_data <- read.table(file = data_file,
 biometric_data$ratio <- biometric_data$handlengte / biometric_data$handbreedte
 head(biometric_data)
 ```
+
 Hierboven checken we de tabel door hem te laten zien met de head functie. Hiermee kunnen we met een oog oplsag checken of de data goed is in geladen en gestructureerd. Ook kan je hier kijken of de cijfers een int zijn en niet een char, dit zou namelijk later nog in het project problemen kunnen ver oorzaken.
 
 ```{r}
@@ -149,17 +150,19 @@ ggplot(data = biometric_data,
     geom_jitter(width=0.05, alpha=0.7) +
     labs(x = "Sexe", y = "handbreedte (mm)") +
     theme_minimal()
+
 ```
 In deze boxplot is te zien dat gemideld de handbreedte van de mannen groter is dan die van de vrouwen. dit kan je zien door dat de Q1-Q3 van de mannen boven die van de vrouwen staat. Het mediaan van de mannen is ook boven de 85 mm terwijl die van de vrouwen onder de 80 mm zit
 
 ```{r}
-#plot voor handbreedte tussen de sexe
+#plot voor handlengte tussen de sexe
 ggplot(data = biometric_data,
        mapping = aes(x = sexe, y = handlengte, fill = sexe)) + 
     geom_boxplot() +
     geom_jitter(width=0.05, alpha=0.7) +
     labs(x = "Sexe", y = "handlengte (mm)") +
     theme_minimal()
+
 ```
 Hier zien we de handlengte van de beide sexe. Er is te zien dat bij de mannen er veel uitschieters zijn, zowel naar boven als naar beneden. Ook is te zien dat de Q1-Q3 van de beide sexe dichterbij ligt dan bij de breedte.
 
@@ -172,6 +175,7 @@ ggplot(data = biometric_data,
     facet_wrap(. ~ sexe) +
     labs(x = "lengte/breedte ratio") +
     theme_minimal()
+
 ```
 
 In deze grafiek zien we de ratio van de lengte/breedte, er is te zien dat ze beide tussen de 1.75 en de 2.75+. Daarnaast is te zien dat de mannen meer on even zijn verdeeld en bij de vrouwen is er een redelijk midden te zien.
@@ -201,10 +205,29 @@ Beantwoord deze vragen:
 
 1. Wat gebeurt er met de vorm van de verdeling als `n` groter wordt?\
    A: De vorm is steeds meer even en lijkt op een hele egale normaal verdeling
+```{r}
+hist_data <- data.frame(x = rnorm(n = 1000))
+ggplot(data = hist_data,
+       mapping = aes(x = x)) +
+    geom_histogram(bins = 10, fill = "red", colour = "black") +
+    theme_minimal()
+```
+   
+   De histogram Hierboven heeft een n-waarde van 1000.
+   
 2. Wat gebeurt er met de spreiding van de data (x-as) als `n` groter wordt, en kan je dat verklaren?\
     A: Als N groter wordt, wordt de spreiding van de x as ook groter. N is steekproef groote wanneer deze        groter is geeft dit meer resultaten waar meer verschillen in kunnen zitten dus krijg je een              bredere x as
 3. Waarom is bij zelfde instellingen voor `n` en `breaks` de uitkomst toch verschillend?\
-    A: Omdat bij N de steekproef omgang bepaald wordt en bij breaks kies je hoeveels bin's je het opdeeld
+    A: Omdat bij N de steekproef omgang bepaald wordt en bij breaks kies je hoeveels bin's je het opdeelt
+```{r}
+hist_data <- data.frame(x = rnorm(n = 100))
+ggplot(data = hist_data,
+       mapping = aes(x = x)) +
+    geom_histogram(bins = 100, fill = "red", colour = "black") +
+    theme_minimal()
+```
+    De histogram hierboven heeft 100 bins.
+    
 4. Welke minimale `n` geeft het meeste kans om een echte normaalverdeling te zien?\
     A: wij hebben bevonden dat 100 het minimale is om op oogopervlak te zien dat het een normaal                verdeling is
 5. Wat voor bijzonders is er aan de hand met het `breaks` argument? Geeft de documentatie daar een verklaring voor?\
