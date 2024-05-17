@@ -20,13 +20,13 @@ Voor dit onderzoek hebben wij van 40 personen, 20 mannen en 20 vrouwen, zowel de
 Hierboven is een kleine tabel te zien met de gemiddeldes en spreidingen van de metingen. De data is opgedeeld in 2 categorieën, man en vrouw. Aan de hand van deze tabel alleen al kan je zien dat de hand van een man gemiddeld groter is dan die van een vrouw, maar toch gaan we dit op andere manieren bekijken.
 
 ### Plot voor handlengte tussen de sexe
-![Boxplot handlengte](Afbeeldingen\boxplot_handlengte.png "Boxplot handlengte")
+![Boxplot handlengte](Afbeeldingen/boxplot_handlengte.png "Boxplot handlengte")
 
 ### Plot voor handbreedte tussen de sexe
-![Boxplot handbreedte](Afbeeldingen\boxplot_handbreedte.png "Boxplot handbreedte")
+![Boxplot handbreedte](Afbeeldingen/boxplot_handbreedte.png "Boxplot handbreedte")
 
 ### Histogram Ratio tussen de sexe
-![Histogram ratio](Afbeeldingen\histogram_ratio.png "Histogram ratio")
+![Histogram ratio](Afbeeldingen/histogram_ratio.png "Histogram ratio")
 
 In de 3 grafieken hierboven zie je de data uit de tabel. Alle grafieken zijn gesplitst op sexe. De bovenste boxplot laat de verdeling van de handbreedte tussen de sexe zien. De boxplot daaronder laat de verdeling van de handlengte tussen de sexe zien. De histogram laat de verdeling van de ratio tussen de sexe zien. Wat opvalt is dat er in elke grafiek wel minstens een uitschieter zit. 
 
