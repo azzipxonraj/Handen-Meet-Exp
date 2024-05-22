@@ -114,7 +114,7 @@ biometric_data$ratio <- biometric_data$handlengte / biometric_data$handbreedte
 head(biometric_data)
 ```
 
-Hierboven checken we de tabel door hem te laten zien met de head functie. Hiermee kunnen we met een oog oplsag checken of de data goed is in geladen en gestructureerd. Ook kan je hier kijken of de cijfers een int zijn en niet een char, dit zou namelijk later nog in het project problemen kunnen ver oorzaken.
+Hierboven checken we de tabel door hem te laten zien met de head functie. Hiermee kunnen we met een oog oplsag checken of de data goed is in geladen en gestructureerd. Ook kan je hier kijken of de cijfers een int zijn en niet een char, dit zou namelijk later nog in het project problemen kunnen veroorzaken.
 
 ```{r}
 ## Gemidelden per sexe
@@ -152,6 +152,7 @@ ggplot(data = biometric_data,
     theme_minimal()
 
 ```
+
 In deze boxplot is te zien dat gemideld de handbreedte van de mannen groter is dan die van de vrouwen. dit kan je zien door dat de Q1-Q3 van de mannen boven die van de vrouwen staat. Het mediaan van de mannen is ook boven de 85 mm terwijl die van de vrouwen onder de 80 mm zit
 
 ```{r}
@@ -164,6 +165,7 @@ ggplot(data = biometric_data,
     theme_minimal()
 
 ```
+
 Hier zien we de handlengte van de beide sexe. Er is te zien dat bij de mannen er veel uitschieters zijn, zowel naar boven als naar beneden. Ook is te zien dat de Q1-Q3 van de beide sexe dichterbij ligt dan bij de breedte.
 
 ```{r}
@@ -229,7 +231,16 @@ ggplot(data = hist_data,
     De histogram hierboven heeft 100 bins.
     
 4. Welke minimale `n` geeft het meeste kans om een echte normaalverdeling te zien?\
-    A: wij hebben bevonden dat 100 het minimale is om op oogopervlak te zien dat het een normaal                verdeling is
+    A: wij hebben bevonden dat 100 het minimale is om op oogopervlak te zien dat het een normaal verdeling is.
+```{r, fig.asp=.6, out.width='60%', fig.align='center'}
+hist_data <- data.frame(x = rnorm(n = 100))
+ggplot(data = hist_data,
+       mapping = aes(x = x)) +
+    geom_histogram(bins = 10, fill = "red", colour = "black") +
+    theme_minimal()
+```
+De histogram hierboven heeft een n waarde van 100.
+
 5. Wat voor bijzonders is er aan de hand met het `breaks` argument? Geeft de documentatie daar een verklaring voor?\
     A: Het breaks argument is anders dan het bins argument. In het bins argument geef je het aantal bins in een histogram aan. Bij het breaks argument kan je een vector meegeven met de grenswaardes van de bins erin.
 :::
@@ -246,8 +257,11 @@ Tot nu toe hebben we alleen maar gekeken naar de biologische variatie, de versch
 biometric_data$lab_as_string <- as.character(biometric_data$laborant_ID)
 
 ggplot(data = biometric_data,
-       mapping = aes(x = "laborant id", y = "handlengte in mm", fill = lab_as_string)) + 
+       mapping = aes(x = "laborant id", y = handlengte, fill = lab_as_string, ylab= "Handlengte in mm")) + 
     geom_boxplot( colour = "black") +
+    ylab("Handlengte (mm)") +
+    xlab("") +
+    guides(fill = guide_legend(title = "Laborant ID")) +
     theme_minimal()
 ```
 
@@ -259,7 +273,10 @@ ggplot(data = biometric_data,
     geom_boxplot(fill = "pink") +
     facet_wrap(. ~ lab_as_string) +
     ylab("Handbreedte (mm)") +
-    theme_linedraw()
+    xlab("Sexe") +
+    ggtitle("Laborant ID") +
+    theme_linedraw() +
+    theme(plot.title = element_text(hjust = 0.5))
 ```
 
 In de bovenstaande boxplot zie je hetzelfde als de boxplot erboven, maar dan met de sexe ook gesplitst. Hier zie je twee bronnen van variatie. Systematiscche bias die waarschijnlijk is veroorzaakt door de laboranten en de biologische variatie tussen man en vrouw.
@@ -286,7 +303,7 @@ t.test(vrouw_ratio,man_ratio)
 ```
 hier gebruiken we een t test dit is een parametrische statistische toets die onder andere kan word gebruikt of het gemiddelde van een normaal verdeling grootheid afwijkt van een bepaalde waarde of dat er een verschil zit in gemidelde tussen twee groepen. In ons geval gebruiken wij hem om 2 groepen te vergelijken. Met deze p waarde kunnen wij bepalen of we onze hypothese kunnen aan nemen
 
-```{r, include=FALSE}
+```{r}
 wilcox.test(vrouw_ratio,man_ratio)
 ```
 
